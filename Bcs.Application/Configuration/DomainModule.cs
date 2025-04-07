@@ -1,0 +1,55 @@
+using System.Reflection;
+using Bcs.Application.Configuration.Settings;
+using Bcs.DataAccess;
+using Bcs.Integration.BrawlStars;
+using Bcs.Integration.BrawlStars.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Bcs.Application.Configuration;
+
+public static class DomainModule
+{
+    public static void SetupDomain(WebApplicationBuilder builder)
+    {
+        SetupDbContext(builder);
+        SetupIntegrations(builder);
+        SetupMediatR(builder);
+    }
+
+    private static void SetupDbContext(WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<DbContextSettings>(
+            builder.Configuration.GetSection(nameof(DbContextSettings)));
+
+        var dbContextSettings = builder.Configuration
+            .GetSection(nameof(DbContextSettings))
+            .Get<DbContextSettings>();
+
+        if (string.IsNullOrWhiteSpace(dbContextSettings?.ConnectionString))
+        {
+            throw new InvalidOperationException(
+                "Invalid connection string in configuration. Please check your settings.");
+        }
+
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(dbContextSettings.ConnectionString));
+
+        builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+    }
+    
+    private static void SetupIntegrations(WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IBrawlStarsService, BrawlStarsService>();
+
+        BrawlStarsApiIntegrationFeature.Setup(builder);
+    }
+    
+    private static void SetupMediatR(WebApplicationBuilder builder)
+    {
+        builder.Services.AddMediatR(cfg => 
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+    }
+}

@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>c7807a1d-ac10-4c11-aaaf-a5d7e3972017</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +18,15 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Configuration\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Bcs.Application\Bcs.Application.csproj" />
+      <ProjectReference Include="..\Bcs.Domain\Bcs.Domain.csproj" />
     </ItemGroup>
 
 </Project>
