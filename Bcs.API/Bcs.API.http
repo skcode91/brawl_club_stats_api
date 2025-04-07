@@ -1,0 +1,6 @@
+@Bcs.API_HostAddress = http://localhost:5010
+
+GET {{Bcs.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
