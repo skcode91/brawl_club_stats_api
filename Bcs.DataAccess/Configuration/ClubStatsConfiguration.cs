@@ -16,7 +16,7 @@ public class ClubStatsConfiguration : IEntityTypeConfiguration<ClubStats>
         
         builder.HasOne(cs => cs.Club)
             .WithMany(c => c.ClubStats)
-            .HasForeignKey(cs => cs.ClubId)
+            .HasForeignKey(cs => cs.ClubTag)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

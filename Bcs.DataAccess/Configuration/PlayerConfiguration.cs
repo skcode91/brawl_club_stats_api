@@ -9,7 +9,7 @@ public class PlayerConfiguration : IEntityTypeConfiguration<Player>
     public void Configure(EntityTypeBuilder<Player> builder)
     {
         builder.ToTable("Players");
-        builder.HasKey(p => p.Id);
+        builder.HasKey(p => p.Tag);
         builder.HasIndex(p => p.Tag)
             .IsUnique()
             .HasDatabaseName("IX_Players_Tag");
@@ -17,10 +17,15 @@ public class PlayerConfiguration : IEntityTypeConfiguration<Player>
         builder.Property(p => p.Name)
             .IsRequired()
             .HasMaxLength(100);
+        
+        builder.HasOne(p => p.LatestStats)
+            .WithOne()
+            .HasForeignKey<Player>(p => p.LatestStatsId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(p => p.PlayerStats)
             .WithOne(ps => ps.Player)
-            .HasForeignKey(ps => ps.PlayerId)
+            .HasForeignKey(ps => ps.PlayerTag)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

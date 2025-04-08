@@ -13,7 +13,7 @@ public class PlayerStatsConfiguration : IEntityTypeConfiguration<PlayerStats>
 
         builder.HasOne(ps => ps.Player)
             .WithMany(p => p.PlayerStats)
-            .HasForeignKey(ps => ps.PlayerId)
+            .HasForeignKey(ps => ps.PlayerTag)
             .OnDelete(DeleteBehavior.Restrict);
         
         builder.HasOne(ps => ps.PlayerSynchronizationHistory)
