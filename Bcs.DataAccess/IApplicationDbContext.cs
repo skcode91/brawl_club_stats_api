@@ -10,4 +10,5 @@ public interface IApplicationDbContext
     DbSet<Player> Players { get; }
     DbSet<PlayerStats> PlayerStats { get; }
     DbSet<PlayerSynchronizationHistory> PlayerSynchronizationHistories { get; }
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -30,8 +30,13 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
             .Include(c => c.Players)
             .Include(c => c.ClubStats)
             .Include(c => c.LatestStats)
-            .FirstOrDefaultAsync(c => c.Tag == club.Tag, cancellationToken)
-                ?? ClubMapper.MapToClub(club);
+            .FirstOrDefaultAsync(c => c.Tag == club.Tag, cancellationToken);
+
+        if (clubEntity == null)
+        {
+            clubEntity = ClubMapper.MapToClub(club);
+            _applicationDbContext.Clubs.Add(clubEntity);
+        }
         
         var newPlayerTags = club.Members
             .Select(m => m.Tag)
@@ -47,6 +52,7 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
         UpdateClub(clubEntity, club);
         UpdatePlayers(allPlayers, club);
         
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
         return true;
     }
     
@@ -102,7 +108,7 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
             CreatedAt = DateTime.UtcNow
         };
         
-        clubEntity.ClubStats.Add(newClubStats);
+        _applicationDbContext.ClubStats.Add(newClubStats);
         clubEntity.LatestStats = newClubStats;
     }
     
@@ -113,22 +119,35 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
             var brawlStarsPlayer = club.Members.First(p => p.Tag == player.Tag);
             player.Name = brawlStarsPlayer.Name;
             player.Role = brawlStarsPlayer.Role;
-            
-            var stats = new PlayerStats
-            {
-                PlayerTag = player.Tag,
-                Trophies = brawlStarsPlayer.Trophies,
-            };
-
-            player.LatestStats = stats;
         }
         
-        var playerSynchronizationHistory = new PlayerSynchronizationHistory
+        var newPlayerStats = players
+            .Select(p =>
+            {
+                var brawlStarsPlayer = club.Members.First(m => m.Tag == p.Tag);
+                return new PlayerStats
+                {
+                    PlayerTag = p.Tag,
+                    Trophies = brawlStarsPlayer.Trophies
+                };
+            })
+            .ToList();
+        
+        _applicationDbContext.PlayerStats.AddRange(newPlayerStats);
+
+        foreach (var player in players)
+        {
+            player.LatestStats = newPlayerStats
+                .First(ps => ps.PlayerTag == player.Tag);
+        }
+
+        var newPlayerSynchronizationHistory = new PlayerSynchronizationHistory()
         {
             CreatedAt = DateTime.UtcNow,
-            PlayerStats = players.Select(p => p.LatestStats).ToList()
+            PlayerStats = newPlayerStats
         };
         
-        _applicationDbContext.PlayerSynchronizationHistories.Add(playerSynchronizationHistory);
+        _applicationDbContext.PlayerSynchronizationHistories.Add(newPlayerSynchronizationHistory);
+
     }
 }

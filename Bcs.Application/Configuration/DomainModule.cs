@@ -35,7 +35,10 @@ public static class DomainModule
         }
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(dbContextSettings.ConnectionString));
+        {
+            options.UseNpgsql(dbContextSettings.ConnectionString);
+            options.EnableSensitiveDataLogging();
+        });
 
         builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
     }
