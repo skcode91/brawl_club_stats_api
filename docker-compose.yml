@@ -1,0 +1,6 @@
+﻿services:
+  bcs.api:
+    image: bcs.api
+    build:
+      context: .
+      dockerfile: Bcs.API/Dockerfile

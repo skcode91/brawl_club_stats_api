@@ -26,34 +26,43 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
         var club = await _brawlStarsService.GetClubAsync(request.Tag, cancellationToken)
             ?? throw new Exception($"Failed to retrieve club with tag: {request.Tag}");
 
-        var clubEntity = await _applicationDbContext.Clubs
-            .Include(c => c.Players)
-            .Include(c => c.ClubStats)
-            .Include(c => c.LatestStats)
-            .FirstOrDefaultAsync(c => c.Tag == club.Tag, cancellationToken);
-
-        if (clubEntity == null)
+        await using var transaction = await _applicationDbContext.BeginTransactionAsync(cancellationToken);
+        try
         {
-            clubEntity = ClubMapper.MapToClub(club);
-            _applicationDbContext.Clubs.Add(clubEntity);
+            var clubEntity = await _applicationDbContext.Clubs
+                .Include(c => c.Players)
+                .Include(c => c.ClubStats)
+                .Include(c => c.LatestStats)
+                .FirstOrDefaultAsync(c => c.Tag == club.Tag, cancellationToken);
+
+            if (clubEntity == null)
+            {
+                clubEntity = ClubMapper.MapToClub(club);
+                _applicationDbContext.Clubs.Add(clubEntity);
+            }
+
+            var newPlayerTags = club.Members
+                .Select(m => m.Tag)
+                .ToHashSet();
+
+            var currentPlayerTags = clubEntity.Players
+                .Select(p => p.Tag)
+                .ToHashSet();
+
+            var allPlayers = await AddPlayersToClub(newPlayerTags, club, clubEntity);
+            RemovePlayersFromClub(newPlayerTags, clubEntity);
+
+            await UpdateClub(clubEntity, club);
+            await UpdatePlayers(allPlayers, club);
+
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
+            return true;
         }
-        
-        var newPlayerTags = club.Members
-            .Select(m => m.Tag)
-            .ToHashSet();
-        
-        var currentPlayerTags = clubEntity.Players
-            .Select(p => p.Tag)
-            .ToHashSet(); 
-        
-        var allPlayers = await AddPlayersToClub(newPlayerTags, club, clubEntity);
-        RemovePlayersFromClub(newPlayerTags, clubEntity);
-        
-        UpdateClub(clubEntity, club);
-        UpdatePlayers(allPlayers, club);
-        
-        await _applicationDbContext.SaveChangesAsync(cancellationToken);
-        return true;
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw new Exception($"Failed to synchronize club: {ex.Message}", ex);
+        }
     }
     
     private void RemovePlayersFromClub(HashSet<string> newPlayerTags, Club clubEntity)
@@ -93,7 +102,7 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
         return [..newPlayers, ..existingPlayers];
     }
 
-    private void UpdateClub(Club clubEntity, BrawlStarsClub club)
+    private async Task UpdateClub(Club clubEntity, BrawlStarsClub club)
     {
         clubEntity.Name = club.Name;
         clubEntity.Description = club.Description;
@@ -109,10 +118,12 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
         };
         
         _applicationDbContext.ClubStats.Add(newClubStats);
-        clubEntity.LatestStats = newClubStats;
+        
+        await _applicationDbContext.SaveChangesAsync();
+        clubEntity.LatestStatsId = newClubStats.Id;
     }
     
-    private void UpdatePlayers(List<Player> players, BrawlStarsClub club)
+    private async Task UpdatePlayers(List<Player> players, BrawlStarsClub club)
     {
         foreach (var player in players)
         {
@@ -120,6 +131,9 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
             player.Name = brawlStarsPlayer.Name;
             player.Role = brawlStarsPlayer.Role;
         }
+        
+
+        await _applicationDbContext.SaveChangesAsync();
         
         var newPlayerStats = players
             .Select(p =>
@@ -134,12 +148,7 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
             .ToList();
         
         _applicationDbContext.PlayerStats.AddRange(newPlayerStats);
-
-        foreach (var player in players)
-        {
-            player.LatestStats = newPlayerStats
-                .First(ps => ps.PlayerTag == player.Tag);
-        }
+        
 
         var newPlayerSynchronizationHistory = new PlayerSynchronizationHistory()
         {
@@ -148,6 +157,13 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
         };
         
         _applicationDbContext.PlayerSynchronizationHistories.Add(newPlayerSynchronizationHistory);
-
+        
+        await _applicationDbContext.SaveChangesAsync();
+        foreach (var player in players)
+        {
+            player.LatestStatsId = newPlayerStats
+                .First(ps => ps.PlayerTag == player.Tag)
+                .Id;
+        }
     }
 }

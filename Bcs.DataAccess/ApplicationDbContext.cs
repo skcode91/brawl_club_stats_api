@@ -1,5 +1,6 @@
 using Bcs.Domain.Models.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Bcs.DataAccess;
 
@@ -13,6 +14,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
+    }
+    
+    public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellation)
+    {
+        return await Database.BeginTransactionAsync(cancellation);
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

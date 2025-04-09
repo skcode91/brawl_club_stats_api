@@ -6,7 +6,7 @@ namespace Bcs.Application.Mapping;
 
 public static class PlayerMapper
 {
-    public static PlayerDto MapToPlayerDto(BrawlStarsMember member) => new PlayerDto()
+    public static PlayerDto MapToPlayerDto(BrawlStarsMember member) => new()
     {
         Tag = member.Tag,
         Name = member.Name,
@@ -14,7 +14,15 @@ public static class PlayerMapper
         Role = member.Role
     };
     
-    public static Player MapToPlayer(BrawlStarsMember player) => new Player()
+    public static PlayerDto MapToPlayerDto(Player player) => new()
+    {
+        Tag = player.Tag,
+        Name = player.Name,
+        Trophies = player.LatestStats.Trophies,
+        Role = player.Role
+    };
+    
+    public static Player MapToPlayer(BrawlStarsMember player) => new()
     {
         Tag = player.Tag,
         Name = player.Name,
