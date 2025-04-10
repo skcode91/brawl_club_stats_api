@@ -1,4 +1,4 @@
-using Bcs.Application.Mapping;
+using Bcs.Application.Configuration.Settings.Mapping;
 using Bcs.DataAccess;
 using Bcs.Domain.Models.Dto;
 using Bcs.Integration.BrawlStars;

@@ -2,7 +2,7 @@ using Bcs.Domain.Models.Dto;
 using Bcs.Domain.Models.Entity;
 using Bcs.Integration.BrawlStars.Models;
 
-namespace Bcs.Application.Mapping;
+namespace Bcs.Application.Configuration.Settings.Mapping;
 
 public static class PlayerMapper
 {
