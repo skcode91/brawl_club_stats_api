@@ -106,6 +106,7 @@ internal class SynchronizeClubCommandHandler : IRequestHandler<SynchronizeClubCo
             player.Name = brawlStarsPlayer.Name;
             player.Role = brawlStarsPlayer.Role;
             player.Trophies = brawlStarsPlayer.Trophies;
+            player.ClubTag = clubEntity.Tag;
         }
         
         var clubSynchronizationHistory = new ClubSynchronizationHistory
