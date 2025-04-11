@@ -17,11 +17,6 @@ public class PlayerConfiguration : IEntityTypeConfiguration<Player>
         builder.Property(p => p.Name)
             .IsRequired()
             .HasMaxLength(100);
-        
-        builder.HasOne(p => p.LatestStats)
-            .WithOne()
-            .HasForeignKey<Player>(p => p.LatestStatsId)
-            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(p => p.PlayerStats)
             .WithOne(ps => ps.Player)

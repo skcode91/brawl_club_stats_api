@@ -2,7 +2,7 @@ using Bcs.Domain.Models.Dto;
 using Bcs.Domain.Models.Entity;
 using Bcs.Integration.BrawlStars.Models;
 
-namespace Bcs.Application.Configuration.Settings.Mapping;
+namespace Bcs.Application.Mapping;
 
 public static class PlayerMapper
 {
@@ -18,7 +18,7 @@ public static class PlayerMapper
     {
         Tag = player.Tag,
         Name = player.Name,
-        Trophies = player.LatestStats.Trophies,
+        Trophies = player.Trophies,
         Role = player.Role
     };
     

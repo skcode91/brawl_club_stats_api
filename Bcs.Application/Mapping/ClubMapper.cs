@@ -2,7 +2,7 @@ using Bcs.Domain.Models.Dto;
 using Bcs.Domain.Models.Entity;
 using Bcs.Integration.BrawlStars.Models;
 
-namespace Bcs.Application.Configuration.Settings.Mapping;
+namespace Bcs.Application.Mapping;
 
 public static class ClubMapper
 {
@@ -22,7 +22,7 @@ public static class ClubMapper
         Tag = club.Tag,
         Name = club.Name,
         Description = club.Description,
-        Trophies = club.LatestStats.Trophies,
+        Trophies = club.Trophies,
         RequiredTrophies = club.RequiredTrophies,
         Type = club.Type,
         Members = club.Players.Select(PlayerMapper.MapToPlayerDto).OrderByDescending(x => x.Trophies).ToList()

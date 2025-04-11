@@ -10,7 +10,7 @@ public class PlayerStatsConfiguration : IEntityTypeConfiguration<PlayerStats>
     {
         builder.ToTable("PlayerStats");
         builder.HasKey(ps => ps.Id);
-
+        
         builder.HasOne(ps => ps.Player)
             .WithMany(p => p.PlayerStats)
             .HasForeignKey(ps => ps.PlayerTag)
@@ -18,7 +18,7 @@ public class PlayerStatsConfiguration : IEntityTypeConfiguration<PlayerStats>
         
         builder.HasOne(ps => ps.PlayerSynchronizationHistory)
             .WithMany(p => p.PlayerStats)
-            .HasForeignKey(ps => ps.PlayerSynchronizationHistoryId)
-            .OnDelete(DeleteBehavior.Restrict);   
+            .HasForeignKey(ps => ps.ClubSynchronizationHistoryId)
+            .OnDelete(DeleteBehavior.Cascade);   
     }
 }

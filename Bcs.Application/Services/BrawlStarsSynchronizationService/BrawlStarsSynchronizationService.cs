@@ -23,10 +23,6 @@ public class BrawlStarsSynchronizationService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await using AsyncServiceScope scope1 = _serviceProvider.CreateAsyncScope();
-
-        await TrySynchronizeClubs(scope1, _settings.ClubTags, stoppingToken);
-
         while (!stoppingToken.IsCancellationRequested)
         {
             await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();

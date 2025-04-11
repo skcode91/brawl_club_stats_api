@@ -1,7 +1,6 @@
-using Bcs.Application.Configuration.Settings.Mapping;
+using Bcs.Application.Mapping;
 using Bcs.DataAccess;
 using Bcs.Domain.Models.Dto;
-using Bcs.Integration.BrawlStars;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,8 +20,6 @@ internal class GetClubByTagQueryHandler : IRequestHandler<GetClubByTagQuery, Clu
     {
         var club = await _applicationDbContext.Clubs
             .Include(c => c.Players)
-                .ThenInclude(p => p.LatestStats)
-            .Include(c => c.LatestStats)
             .FirstOrDefaultAsync(c => c.Tag == request.Tag, cancellationToken)
                 ?? throw new Exception($"Failed to retrieve club with tag: {request.Tag}");
 
