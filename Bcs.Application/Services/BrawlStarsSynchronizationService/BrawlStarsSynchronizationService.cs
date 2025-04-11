@@ -26,9 +26,7 @@ public class BrawlStarsSynchronizationService : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
-            
-            await TrySynchronizeClubs(scope, _settings.ClubTags, stoppingToken);
-            
+                        
             var now = DateTime.Now;
             var nextFullHour = new DateTime(now.Year, now.Month, now.Day, now.Hour + 1, 0, 0);
             var timeToWait = nextFullHour - now;
@@ -36,6 +34,7 @@ public class BrawlStarsSynchronizationService : BackgroundService
             _logger.LogInformation("Waiting until the next full hour: {nextFullHour}", nextFullHour);
 
             await Task.Delay(timeToWait, stoppingToken);
+            await TrySynchronizeClubs(scope, _settings.ClubTags, stoppingToken);
         }
     }
 

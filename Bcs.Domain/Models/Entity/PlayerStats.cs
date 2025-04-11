@@ -5,7 +5,6 @@ public class PlayerStats
     public int Id { get; set; }
     public int Trophies { get; set; }
 
-
     public required string PlayerTag { get; set; }
     public Player Player { get; set; } = null!;
     
