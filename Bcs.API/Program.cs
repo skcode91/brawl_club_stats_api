@@ -33,4 +33,17 @@ app.MapPost("/api/club/synchronize/{tag}", async (string tag, [FromServices] IMe
     return Results.Ok(result);
 });
 
+app.MapGet("/api/ranking", async ([FromServices] IMediator mediator) =>
+{
+    var ranking = await mediator.Send(new GetFullRankingQuery());
+    return Results.Ok(ranking);
+});
+
+// club ranking
+app.MapGet("/api/club/ranking/{tag}", async (string tag, [FromServices] IMediator mediator) =>
+{
+    var ranking = await mediator.Send(new GetClubRankingQuery(tag));
+    return Results.Ok(ranking);
+});
+
 app.Run();

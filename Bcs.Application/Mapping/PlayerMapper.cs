@@ -29,4 +29,24 @@ public static class PlayerMapper
         Role = player.Role,
         CreatedAt = DateTime.UtcNow
     };
+    
+    public static PlayerDetailsDto MapToPlayerDetailsDto(Player player) => new()
+    {
+        Tag = player.Tag,
+        Name = player.Name,
+        Trophies = player.Trophies,
+        Role = player.Role,
+        ClubTag = player.Tag,
+        ClubName = player.Club != null ? player.Club.Name : string.Empty
+    };
+    
+    public static PlayerRankingDto MapToPlayerRankingDto(Player player, int rank) => new()
+    {
+        Rank = rank,
+        Tag = player.Tag,
+        Name = player.Name,
+        Trophies = player.Trophies,
+        ClubTag = player.ClubTag,
+        ClubName = player.Club != null ? player.Club.Name : string.Empty,
+    };
 }
