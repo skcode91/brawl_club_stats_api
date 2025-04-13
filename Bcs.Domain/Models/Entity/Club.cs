@@ -1,6 +1,6 @@
 namespace Bcs.Domain.Models.Entity;
 
-public class Club
+public class Club : TimeStampedEntity
 {
     public required string Tag { get; set; }
     public required string Name { get; set; }
@@ -9,7 +9,6 @@ public class Club
     public int RequiredTrophies { get; set; }
     public string Type { get; set; } = string.Empty;
     public int BadgeId { get; set; }
-    public DateTime CreatedAt { get; set; }
     
     public IList<Player> Players { get; set; } = new List<Player>();
 

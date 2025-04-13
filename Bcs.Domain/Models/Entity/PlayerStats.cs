@@ -1,6 +1,6 @@
 namespace Bcs.Domain.Models.Entity;
 
-public class PlayerStats
+public class PlayerStats : TimeStampedEntity
 {
     public int Id { get; set; }
     public int Trophies { get; set; }
@@ -10,6 +10,4 @@ public class PlayerStats
     
     public int ClubSynchronizationHistoryId { get; set; }
     public ClubSynchronizationHistory PlayerSynchronizationHistory { get; set; } = null!;
-    
-    public DateTime CreatedAt { get; set; }
 }
