@@ -42,5 +42,11 @@ public static class Endpoints
             var playerOfDay = await mediator.Send(playerOfDayQuery);
             return Results.Ok(playerOfDay);
         });
+        
+        app.MapGet("/api/clubs", async ([FromServices] IMediator mediator) =>
+        {
+            var clubs = await mediator.Send(new GetClubsQuery());
+            return Results.Ok(clubs);
+        });
     }
 }

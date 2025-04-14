@@ -1,9 +1,7 @@
 namespace Bcs.Domain.Models.Dto;
 
-public class ClubDto
+public class ClubDto : ClubBaseInfoDto
 {
-    public required string Name { get; set; }
-    public required string Tag { get; set; }
     public string Description { get; set; } = string.Empty;
     public int Trophies { get; set; }
     public int RequiredTrophies { get; set; }

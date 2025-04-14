@@ -7,6 +7,19 @@ DomainModule.SetupDomain(builder);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "DefaultPolicy",
+        builder =>
+        {
+            builder
+                .AllowAnyMethod()
+                .AllowAnyOrigin()
+                .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -14,6 +27,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("DefaultPolicy");
 
 app.UseHttpsRedirection();
 
