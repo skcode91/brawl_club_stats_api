@@ -9,7 +9,7 @@ public static class Endpoints
 {
     public static void MapEndpoints(this WebApplication app)
     {
-        app.MapGet("/api/club/ranking/{tag}", async (string tag, [FromServices] IMediator mediator) =>
+        app.MapGet("/api/club/ranking", async ([FromQuery] string? tag, [FromServices] IMediator mediator) =>
         {
             var ranking = await mediator.Send(new GetClubRankingQuery(tag));
             return Results.Ok(ranking);

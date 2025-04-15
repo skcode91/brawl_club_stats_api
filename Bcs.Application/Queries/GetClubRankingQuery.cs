@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bcs.Application.Queries;
 
-public record GetClubRankingQuery(string ClubTag) : IRequest<List<PlayerRankingDto>>;
+public record GetClubRankingQuery(string? ClubTag) : IRequest<List<PlayerRankingDto>>;
 
 internal class GetClubRankingQueryHandler : IRequestHandler<GetClubRankingQuery, List<PlayerRankingDto>>
 {
@@ -20,8 +20,9 @@ internal class GetClubRankingQueryHandler : IRequestHandler<GetClubRankingQuery,
     public async Task<List<PlayerRankingDto>> Handle(GetClubRankingQuery request, CancellationToken cancellationToken)
     {
         var players = await _context.Players
+            .AsNoTracking()
             .Include(p => p.Club)
-            .Where(p => p.Club.Tag == request.ClubTag)
+            .Where(p => p.Club != null && (string.IsNullOrWhiteSpace(request.ClubTag) || p.Club.Tag == request.ClubTag))
             .OrderByDescending(p => p.Trophies)
             .ToListAsync(cancellationToken);
         

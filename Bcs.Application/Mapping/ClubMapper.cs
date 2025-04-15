@@ -37,5 +37,11 @@ public static class ClubMapper
         Type = club.Type,
         CreatedAt = DateTime.UtcNow
     };
+    
+    public static ClubBaseInfoDto MapToClubBaseInfoDto(Club club) => new()
+    {
+        Tag = club.Tag,
+        Name = club.Name,
+    };
 }
  
