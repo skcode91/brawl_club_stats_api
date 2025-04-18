@@ -49,4 +49,16 @@ public static class PlayerMapper
         ClubTag = player.ClubTag,
         ClubName = player.Club != null ? player.Club.Name : string.Empty,
     };
+
+    public static PlayerOfPeriodDto MapToPlayerOfPeriodDto(Player player, int rank, int result) => new()
+    {
+        Rank = rank,
+        Result = result,
+        Tag = player.Tag,
+        Name = player.Name,
+        Trophies = player.Trophies,
+        Role = player.Role,
+        ClubTag = player.ClubTag,
+        ClubName = player.Club != null ? player.Club.Name : string.Empty,
+    };
 }

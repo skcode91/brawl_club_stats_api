@@ -48,5 +48,15 @@ public static class Endpoints
             var clubs = await mediator.Send(new GetClubsQuery());
             return Results.Ok(clubs);
         });
+        
+        app.MapGet("/api/club-period-stats", async ([FromServices] IMediator mediator, 
+            [FromQuery] string? clubTag, 
+            [FromQuery] DateTime periodStart, 
+            [FromQuery] DateTime periodEnd) =>
+        {
+            var clubPeriodStatsQuery = new GetClubPeriodStatsQuery(clubTag, periodStart, periodEnd);
+            var clubPeriodStats = await mediator.Send(clubPeriodStatsQuery);
+            return Results.Ok(clubPeriodStats);
+        });
     }
 }
