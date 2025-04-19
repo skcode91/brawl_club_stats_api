@@ -74,8 +74,8 @@ internal class GetClubPeriodStatsQueryHandler : IRequestHandler<GetClubPeriodSta
 
         responsePlayers.AddRange(playerStatPairs.Select((x, index) => new PeriodItemDto()
         {
-            PlayerOnStart = PlayerMapper.MapToPlayerDetailsDto(x.Start.Player),
-            PlayerOnEnd = PlayerMapper.MapToPlayerOfPeriodDto(x.End.Player, index + 1, x.End.Trophies - x.Start.Trophies)
+            PlayerOnStart = PlayerMapper.MapToPlayerDetailsDto(x.Start.Player, x.Start.Trophies),
+            PlayerOnEnd = PlayerMapper.MapToPlayerOfPeriodDto(x.End.Player, index + 1, x.End.Trophies - x.Start.Trophies, x.End.Trophies)
         }));
 
         return new ClubPeriodDto()

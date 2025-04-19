@@ -19,7 +19,7 @@ internal class GetClubsQueryHandler : IRequestHandler<GetClubsQuery, List<ClubBa
     public async Task<List<ClubBaseInfoDto>> Handle(GetClubsQuery request, CancellationToken cancellationToken) =>
         await _context.Clubs
             .AsNoTracking()
-            .OrderByDescending(c => c.Name)
+            .OrderByDescending(c => c.Trophies)
             .Select(x => new ClubBaseInfoDto
             {
                 Tag = x.Tag,

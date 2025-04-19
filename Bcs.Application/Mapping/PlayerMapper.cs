@@ -30,11 +30,11 @@ public static class PlayerMapper
         CreatedAt = DateTime.UtcNow
     };
     
-    public static PlayerDetailsDto MapToPlayerDetailsDto(Player player) => new()
+    public static PlayerDetailsDto MapToPlayerDetailsDto(Player player, int? trophies = null) => new()
     {
         Tag = player.Tag,
         Name = player.Name,
-        Trophies = player.Trophies,
+        Trophies = trophies ?? player.Trophies,
         Role = player.Role,
         ClubTag = player.Tag,
         ClubName = player.Club != null ? player.Club.Name : string.Empty
@@ -50,13 +50,13 @@ public static class PlayerMapper
         ClubName = player.Club != null ? player.Club.Name : string.Empty,
     };
 
-    public static PlayerOfPeriodDto MapToPlayerOfPeriodDto(Player player, int rank, int result) => new()
+    public static PlayerOfPeriodDto MapToPlayerOfPeriodDto(Player player, int rank, int result, int? trophies = null) => new()
     {
         Rank = rank,
         Result = result,
         Tag = player.Tag,
         Name = player.Name,
-        Trophies = player.Trophies,
+        Trophies = trophies ?? player.Trophies,
         Role = player.Role,
         ClubTag = player.ClubTag,
         ClubName = player.Club != null ? player.Club.Name : string.Empty,

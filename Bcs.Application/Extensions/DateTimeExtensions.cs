@@ -18,11 +18,11 @@ public static class DateTimeExtensions
     
     public static DateTime GetFirstHourOfDay(this DateTime date)
     {
-        return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, date.Kind);
+        return new DateTime(date.Year, date.Month, date.Day, 1, 0, 0, date.Kind);
     }
     
     public static DateTime GetFirstHourOfNextDay(this DateTime date)
     {
-        return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, date.Kind).AddDays(1);
+        return new DateTime(date.Year, date.Month, date.Day, 1, 0, 0, date.Kind).AddDays(1);
     }
 }
